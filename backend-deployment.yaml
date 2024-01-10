@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - image: mariiabk/react-express-mongodb-backend:latest
+          name: backend
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: backend/usr/src/app
+              name: backend-claim0
+            - mountPath: backend/usr/src/app/node_modules
+              name: backend-claim1
+          env:
+            - name: NODE_ENV
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-configmap
+                  key: node_env
+            - name: MONGODB_URI
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-configmap
+                  key: mongodb_uri
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-configmap
+                  key: port
+      restartPolicy: Always
+      volumes:
+        - name: backend-claim0
+          persistentVolumeClaim:
+            claimName: backend-claim0
+        - name: backend-claim1
+          persistentVolumeClaim:
+            claimName: backend-claim1
+status: {}

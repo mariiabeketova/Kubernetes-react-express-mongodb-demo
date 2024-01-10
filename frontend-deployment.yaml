@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - image: mariiabk/react-express-mongodb-frontend:latest
+          name: frontend
+          ports:
+            - containerPort: 3000
+              hostPort: 3000
+              protocol: TCP
+          resources: {}
+          stdin: true
+          volumeMounts:
+            - mountPath: frontend/usr/src/app
+              name: frontend-claim0
+            - mountPath: frontend/usr/src/app/node_modules
+              name: frontend-claim1
+      restartPolicy: Always
+      volumes:
+        - name: frontend-claim0
+          persistentVolumeClaim:
+            claimName: frontend-claim0
+        - name: frontend-claim1
+          persistentVolumeClaim:
+            claimName: frontend-claim1
+status: {}

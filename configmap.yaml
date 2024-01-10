@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configmap
+data:
+  node_env: development
+  mongodb_uri: mongodb://mongo:27017/TodoApp
+  port: '3000'
+
